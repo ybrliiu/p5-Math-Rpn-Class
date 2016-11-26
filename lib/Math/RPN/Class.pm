@@ -7,14 +7,17 @@
   use Data::Dumper;
 
   my @SIGNS = qw(+ - * / % ++ --);
+  my $SIGNS_REGEXP = '(' . join('|', map { quotemeta $_ } @SIGNS) . ')';
 
   sub new {
     my ($class, %args) = @_;
     my $self = {
-      stack       => [],
-      accumulator => undef,
+      # changeble
       delimiter   => ' ',
       %args,
+      # cant change
+      stack       => [],
+      accumulator => undef,
     };
     bless $self, $class;
   }
@@ -42,8 +45,7 @@
 
   sub push_stack {
     my ($self, $sign) = @_;
-    my @is_sign = grep { $sign eq $_ } @SIGNS;
-    if (@is_sign) {
+    if ($sign =~ /$SIGNS_REGEXP/) {
       $self->calc($sign);
     } else {
       push @{ $self->{stack} }, $sign;
